@@ -15,7 +15,7 @@ Bu uygulama işletme sahibine kod göstermez. İşletme sahibi QR menü linkini,
 - Eksik çeviri fallback sistemi
 - Admin dashboard, restoran listesi ve restoran detay ekranı
 - Kategori, ürün, fiyat, etiket, alerjen ve diyet bilgisi UI'ı
-- QR kod gösterimi ve masa kartı ön izlemesi
+- QR kod gösterimi, QR PNG indirme ve masa kartı PNG indirme
 - Google yorum cevap şablonları ve kopyalama butonları
 - Hazır satış mesajı ve WhatsApp yönlendirme placeholder'ı
 - Mock data ayrı data dosyalarında
@@ -58,13 +58,13 @@ npm run build
 
 Bu proje Vercel için zero-config Next.js projesi olarak hazırlanmıştır. Ek bir `vercel.json` dosyası zorunlu değildir.
 
-### Git ile Deploy
+Git ile deploy:
 
 1. Projeyi GitHub, GitLab veya Bitbucket reposuna gönderin.
 2. Vercel panelinde **Add New Project** seçin.
 3. Repoyu import edin.
 4. Vercel framework olarak **Next.js** algılamalıdır.
-5. Aşağıdaki ayarlarla deploy edin:
+5. Aşağıdaki ayarlarla deploy edin.
 
 ```text
 Framework Preset: Next.js
@@ -76,20 +76,20 @@ Development Command: npm run dev
 Node.js Version: 20.x veya üzeri
 ```
 
-### CLI ile Preview Deploy
+CLI ile preview deploy:
 
 ```bash
 npm install -g vercel
 vercel
 ```
 
-### CLI ile Production Deploy
+CLI ile production deploy:
 
 ```bash
 vercel --prod
 ```
 
-### Ortam Değişkenleri
+## Ortam Değişkenleri
 
 MVP şu an mock data ile çalıştığı için zorunlu ortam değişkeni yoktur.
 
@@ -101,18 +101,15 @@ NEXT_PUBLIC_SITE_URL=https://kendi-domaininiz.com
 
 Bu değer girilirse Next.js metadata URL'si gerçek production domainine göre oluşur. Girilmezse güvenli fallback olarak `https://qr-menu-business-kit.vercel.app` kullanılır.
 
-### Deploy Sonrası Kontrol Edilecek Route'lar
+## Admin Demo Koruması
 
-- `/`
-- `/pricing`
-- `/admin`
-- `/admin/restaurants`
-- `/admin/restaurants/mavi-kiyi-bistro`
-- `/admin/reviews`
-- `/menu/mavi-kiyi-bistro`
-- `/menu/mavi-kiyi-bistro?lang=ar`
-- `/menu/kapadokya-cave-cafe`
-- `/menu/istanbul-marina-restaurant`
+Admin route'ları müşteri demosunda doğrudan görünmesin diye basit bir demo şifre ekranı ile korunur.
+
+```text
+Demo şifre: demo123
+```
+
+Bu koruma sadece demo amaçlıdır ve gerçek güvenlik sağlamaz. Gerçek müşteri kullanımı için Supabase Auth veya başka bir gerçek authentication sistemi eklenmelidir.
 
 ## Klasör Yapısı
 
@@ -155,6 +152,19 @@ types/
 - Mavi Kıyı Bistro: `/menu/mavi-kiyi-bistro`
 - Kapadokya Cave Cafe: `/menu/kapadokya-cave-cafe`
 - İstanbul Marina Restaurant: `/menu/istanbul-marina-restaurant`
+
+## Deploy Sonrası Kontrol Edilecek Route'lar
+
+- `/`
+- `/pricing`
+- `/admin`
+- `/admin/restaurants`
+- `/admin/restaurants/mavi-kiyi-bistro`
+- `/admin/reviews`
+- `/menu/mavi-kiyi-bistro`
+- `/menu/mavi-kiyi-bistro?lang=ar`
+- `/menu/kapadokya-cave-cafe`
+- `/menu/istanbul-marina-restaurant`
 
 ## Demo Restoranlar
 

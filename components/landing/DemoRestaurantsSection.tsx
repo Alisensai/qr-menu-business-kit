@@ -1,4 +1,4 @@
-import { ArrowRight, Settings } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { restaurants } from "@/data/restaurants";
@@ -15,7 +15,7 @@ export function DemoRestaurantsSection() {
               Demo restoranları gör
             </h2>
             <p className="mt-4 text-base leading-7 text-graphite/76">
-              Farklı paket seviyelerindeki örnek işletmeleri hem müşteri menüsü hem admin hazırlık ekranı olarak inceleyin.
+              Farklı paket seviyelerindeki örnek işletmeleri müşteri menüsü olarak inceleyin.
             </p>
           </div>
         </div>
@@ -66,13 +66,6 @@ export function DemoRestaurantsSection() {
                     >
                       Menüyü Aç
                       <ArrowRight className="h-4 w-4" />
-                    </Link>
-                    <Link
-                      href={`/admin/restaurants/${restaurant.slug}`}
-                      className="inline-flex items-center gap-2 rounded-md border border-ink/10 bg-white px-4 py-2 text-sm font-bold text-ink transition hover:border-saffron hover:text-ember"
-                    >
-                      Admin’de Gör
-                      <Settings className="h-4 w-4" />
                     </Link>
                   </div>
                 </div>

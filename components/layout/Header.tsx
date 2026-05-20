@@ -4,8 +4,7 @@ import { MessageCircle, QrCode } from "lucide-react";
 const navItems = [
   { href: "/#services", label: "Hizmetler" },
   { href: "/#demo", label: "Demo" },
-  { href: "/pricing", label: "Paketler" },
-  { href: "/admin", label: "Admin" }
+  { href: "/pricing", label: "Paketler" }
 ];
 
 export function Header() {

@@ -20,7 +20,6 @@ export function Footer() {
         <div className="grid gap-3 text-sm text-white/72">
           <Link href="/menu/mavi-kiyi-bistro" className="hover:text-white">Demo Menü</Link>
           <Link href="/pricing" className="hover:text-white">Paketler</Link>
-          <Link href="/admin" className="hover:text-white">Admin Panel</Link>
         </div>
 
         <div className="grid content-start gap-3 text-sm">

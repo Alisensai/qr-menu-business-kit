@@ -7,14 +7,14 @@ export default function NotFound() {
         <p className="text-sm font-black uppercase tracking-[0.18em] text-ember">404</p>
         <h1 className="mt-3 font-display text-4xl font-bold text-ink">Sayfa bulunamadı</h1>
         <p className="mt-4 text-sm leading-6 text-graphite/70">
-          Bu restoran slug’ı için aktif menü bulunamadı. Admin panelden restoran bilgilerini kontrol edebilirsiniz.
+          Bu restoran slug’ı için aktif menü bulunamadı. Demo menülerden birini açarak sistemi inceleyebilirsiniz.
         </p>
         <div className="mt-6 flex justify-center gap-3">
           <Link href="/" className="rounded-md bg-ink px-4 py-2 text-sm font-bold text-white">
             Ana sayfa
           </Link>
-          <Link href="/admin/restaurants" className="rounded-md border border-ink/10 bg-white px-4 py-2 text-sm font-bold text-ink">
-            Restoranlar
+          <Link href="/menu/mavi-kiyi-bistro" className="rounded-md border border-ink/10 bg-white px-4 py-2 text-sm font-bold text-ink">
+            Demo menü
           </Link>
         </div>
       </div>
