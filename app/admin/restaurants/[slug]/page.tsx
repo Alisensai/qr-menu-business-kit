@@ -7,6 +7,7 @@ import { TranslationStatus } from "@/components/admin/TranslationStatus";
 import { QRCodeCard } from "@/components/menu/QRCodeCard";
 import { restaurants } from "@/data/restaurants";
 import { getRestaurantBySlug } from "@/lib/getRestaurantBySlug";
+import { getMenuUrl } from "@/lib/menuUrl";
 
 export function generateStaticParams() {
   return restaurants.map((restaurant) => ({
@@ -26,7 +27,7 @@ export default async function AdminRestaurantDetailPage({
     notFound();
   }
 
-  const menuUrl = `/menu/${data.restaurant.slug}`;
+  const menuUrl = getMenuUrl(data.restaurant.slug);
 
   return (
     <div className="space-y-6">

@@ -4,6 +4,7 @@ import { pricingPackages } from "@/data/packages";
 import { menuItems, restaurants } from "@/data/restaurants";
 import { getMissingTranslationCount } from "@/lib/translationStatus";
 import { getLanguageLabel } from "@/lib/languageUtils";
+import { getMenuUrl } from "@/lib/menuUrl";
 import { CopyButton } from "@/components/ui/CopyButton";
 
 export function RestaurantList() {
@@ -19,7 +20,7 @@ export function RestaurantList() {
           const packageName = pricingPackages.find((plan) => plan.id === restaurant.packageType)?.name;
           const productCount = menuItems.filter((item) => item.restaurantSlug === restaurant.slug).length;
           const missingCount = getMissingTranslationCount(restaurant);
-          const menuUrl = `/menu/${restaurant.slug}`;
+          const menuUrl = getMenuUrl(restaurant.slug);
 
           return (
             <article key={restaurant.id} className="rounded-lg border border-ink/10 bg-white p-5 shadow-soft">

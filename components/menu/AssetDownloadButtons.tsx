@@ -2,7 +2,8 @@
 
 import { Download, FileImage } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
-import { useRef, useSyncExternalStore } from "react";
+import { useRef } from "react";
+import { getSiteUrl } from "@/lib/menuUrl";
 
 interface AssetDownloadButtonsProps {
   menuUrl: string;
@@ -12,28 +13,13 @@ interface AssetDownloadButtonsProps {
 }
 
 export function resolveMenuUrl(menuUrl: string) {
-  if (typeof window === "undefined") {
-    return menuUrl;
-  }
-
-  return menuUrl.startsWith("http") ? menuUrl : `${window.location.origin}${menuUrl}`;
-}
-
-function subscribeOrigin() {
-  return () => undefined;
-}
-
-function getClientOrigin() {
-  return window.location.origin;
-}
-
-function getServerOrigin() {
-  return "";
+  return menuUrl.startsWith("http")
+    ? menuUrl
+    : `${getSiteUrl()}${menuUrl.startsWith("/") ? "" : "/"}${menuUrl}`;
 }
 
 export function useResolvedMenuUrl(menuUrl: string) {
-  const origin = useSyncExternalStore(subscribeOrigin, getClientOrigin, getServerOrigin);
-  return menuUrl.startsWith("http") || !origin ? menuUrl : `${origin}${menuUrl}`;
+  return resolveMenuUrl(menuUrl);
 }
 
 function downloadCanvas(canvas: HTMLCanvasElement, filename: string) {

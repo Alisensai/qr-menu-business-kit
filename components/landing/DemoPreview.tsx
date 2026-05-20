@@ -2,6 +2,7 @@ import { QRCodeSVG } from "qrcode.react";
 import Image from "next/image";
 import { getRestaurantBySlug } from "@/lib/getRestaurantBySlug";
 import { formatCurrency, getCategoryTranslation, getMenuItemTranslation } from "@/lib/languageUtils";
+import { getMenuUrl } from "@/lib/menuUrl";
 
 export function DemoPreview() {
   const data = getRestaurantBySlug("mavi-kiyi-bistro");
@@ -12,6 +13,7 @@ export function DemoPreview() {
 
   const { restaurant, categories, items } = data;
   const visibleItems = items.filter((item) => item.isPopular).slice(0, 3);
+  const menuUrl = getMenuUrl(restaurant.slug);
 
   return (
     <section id="demo" className="bg-white py-20">
@@ -26,9 +28,9 @@ export function DemoPreview() {
             </p>
             <div className="mt-8 rounded-lg border border-ink/10 bg-porcelain p-5">
               <p className="text-sm font-semibold text-ember">Örnek menü linki</p>
-              <p className="mt-2 break-all text-sm text-ink">/menu/{restaurant.slug}</p>
+              <p className="mt-2 break-all text-sm text-ink">{menuUrl}</p>
               <div className="mt-4 inline-flex rounded-md bg-white p-3">
-                <QRCodeSVG value={`/menu/${restaurant.slug}`} size={118} fgColor="#1c2430" />
+                <QRCodeSVG value={menuUrl} size={118} fgColor="#1c2430" />
               </div>
             </div>
           </div>

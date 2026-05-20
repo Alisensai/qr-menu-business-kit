@@ -30,7 +30,7 @@ export function QRCodeCard({
           <p className="mt-1 break-all text-sm text-graphite/70">{resolvedMenuUrl}</p>
         </div>
         <Link
-          href={menuUrl}
+          href={resolvedMenuUrl}
           className="rounded-md border border-ink/10 p-2 text-ink transition hover:border-saffron hover:text-ember"
           title="Menüyü aç"
         >
@@ -54,7 +54,7 @@ export function QRCodeCard({
       <div className="mt-4 flex flex-wrap gap-2">
         <CopyButton text={resolvedMenuUrl} label="Menü linkini kopyala" className="bg-ember hover:bg-saffron" />
         <AssetDownloadButtons
-          menuUrl={menuUrl}
+          menuUrl={resolvedMenuUrl}
           restaurantName={restaurantName}
           restaurantSlug={restaurantSlug}
         />

@@ -101,6 +101,8 @@ NEXT_PUBLIC_SITE_URL=https://kendi-domaininiz.com
 
 Bu değer girilirse Next.js metadata URL'si gerçek production domainine göre oluşur. Girilmezse güvenli fallback olarak `https://qr-menu-business-kit.vercel.app` kullanılır.
 
+QR kodların telefon kamerasıyla doğru şekilde açılması için `NEXT_PUBLIC_SITE_URL` production domainiyle ayarlanmalıdır. QR içerikleri relative path değil, tam URL olarak üretilir.
+
 ## Admin Demo Koruması
 
 Admin route'ları müşteri demosunda doğrudan görünmesin diye basit bir demo şifre ekranı ile korunur.

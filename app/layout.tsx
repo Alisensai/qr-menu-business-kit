@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
+import { getSiteUrl } from "@/lib/menuUrl";
 import "./globals.css";
 
 const inter = Inter({
@@ -14,13 +15,11 @@ const playfair = Playfair_Display({
   display: "swap"
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://qr-menu-business-kit.vercel.app";
-
 export const metadata: Metadata = {
   title: "QR Menu Business Kit",
   description:
     "Restoranlar için QR menü, çok dilli menü açıklamaları ve Google yorum cevap paketi.",
-  metadataBase: new URL(siteUrl)
+  metadataBase: new URL(getSiteUrl())
 };
 
 export default function RootLayout({

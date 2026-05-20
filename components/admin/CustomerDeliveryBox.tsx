@@ -57,7 +57,7 @@ export function CustomerDeliveryBox({ restaurant, menuUrl }: CustomerDeliveryBox
           <div className="mt-3 flex flex-wrap gap-2">
             <CopyButton text={resolvedMenuUrl} label="Link kopyala" className="bg-ember hover:bg-saffron" />
             <AssetDownloadButtons
-              menuUrl={menuUrl}
+              menuUrl={resolvedMenuUrl}
               restaurantName={restaurant.name}
               restaurantSlug={restaurant.slug}
             />
