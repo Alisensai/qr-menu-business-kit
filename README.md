@@ -16,6 +16,8 @@ Bu uygulama işletme sahibine kod göstermez. İşletme sahibi QR menü linkini,
 - Admin dashboard, restoran listesi ve restoran detay ekranı
 - Kategori, ürün, fiyat, etiket, alerjen ve diyet bilgisi UI'ı
 - QR kod gösterimi, QR PNG indirme ve masa kartı PNG indirme
+- Müşteri sepeti, ürün notu ve QR menüden canlı sipariş oluşturma akışı
+- Admin canlı sipariş ekranı ve sipariş durumu güncelleme
 - Google yorum cevap şablonları ve kopyalama butonları
 - Hazır satış mesajı ve WhatsApp yönlendirme placeholder'ı
 - Mock data ayrı data dosyalarında
@@ -52,6 +54,12 @@ Kontroller:
 npm run type-check
 npm run lint
 npm run build
+```
+
+Prisma şemasını bağlı PostgreSQL veritabanına uygulamak için:
+
+```bash
+npx prisma db push
 ```
 
 ## Vercel Deploy
@@ -91,7 +99,12 @@ vercel --prod
 
 ## Ortam Değişkenleri
 
-MVP şu an mock data ile çalıştığı için zorunlu ortam değişkeni yoktur.
+Landing ve paket içeriklerinde demo veriler bulunur. Dinamik menü, admin girişi ve canlı sipariş akışı için PostgreSQL bağlantısı ile Auth.js secret değeri gerekir:
+
+```text
+DATABASE_URL=postgresql://...
+AUTH_SECRET=uzun-rastgele-bir-secret
+```
 
 İsteğe bağlı:
 
@@ -103,18 +116,11 @@ Bu değer girilirse Next.js metadata URL'si gerçek production domainine göre o
 
 QR kodların telefon kamerasıyla doğru şekilde açılması için `NEXT_PUBLIC_SITE_URL` production domainiyle ayarlanmalıdır. QR içerikleri relative path değil, tam URL olarak üretilir.
 
-Auth.js Credentials girişi etkinleştirildiğinde production ortamında Prisma bağlantısı ve Auth.js secret değeri de tanımlanmalıdır:
-
-```text
-DATABASE_URL=postgresql://...
-AUTH_SECRET=uzun-rastgele-bir-secret
-```
-
 ## Admin Kimlik Doğrulama
 
 `/admin` ile başlayan route'lar NextAuth oturumu ister. Oturum yoksa middleware kullanıcıyı `/login` sayfasına yönlendirir; admin layout'u da sunucu tarafında session kontrolünü tekrarlar.
 
-Bu aşamada giriş altyapısı Prisma kullanıcı kaydı ve hash'lenmiş şifre bekler. Tenant bazlı veri filtreleme sonraki veri erişim katmanı adımlarında session içindeki `tenantId` ile bağlanacaktır.
+Bu aşamada giriş altyapısı Prisma kullanıcı kaydı ve hash'lenmiş şifre bekler. Admin şube, menü ve sipariş veri erişimleri session içindeki `tenantId` ile ilgili işletmeye sınırlandırılır.
 
 ## Klasör Yapısı
 
@@ -124,6 +130,7 @@ app/
   pricing/page.tsx
   menu/[slug]/page.tsx
   admin/page.tsx
+  admin/orders/page.tsx
   admin/restaurants/page.tsx
   admin/restaurants/[slug]/page.tsx
   admin/reviews/page.tsx
@@ -152,6 +159,7 @@ types/
 - Landing page: `/`
 - Paketler: `/pricing`
 - Admin panel: `/admin`
+- Canlı siparişler: `/admin/orders`
 - Restoran listesi: `/admin/restaurants`
 - Yorum cevap modülü: `/admin/reviews`
 - Mavi Kıyı Bistro: `/menu/mavi-kiyi-bistro`
@@ -163,6 +171,7 @@ types/
 - `/`
 - `/pricing`
 - `/admin`
+- `/admin/orders`
 - `/admin/restaurants`
 - `/admin/restaurants/mavi-kiyi-bistro`
 - `/admin/reviews`

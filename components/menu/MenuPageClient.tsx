@@ -2,7 +2,6 @@
 
 import clsx from "clsx";
 import {
-  BellRing,
   Flame,
   Heart,
   Info,
@@ -10,6 +9,7 @@ import {
   Leaf,
   Milk,
   Search,
+  ShoppingBag,
   Sparkles,
   WheatOff
 } from "lucide-react";
@@ -17,18 +17,29 @@ import { useDeferredValue, useMemo, useState } from "react";
 import type { ComponentType } from "react";
 import type { LucideProps } from "lucide-react";
 import type { LanguageCode, MenuCategory, MenuItem, Restaurant } from "@/types";
+import { CartDrawer } from "@/components/menu/CartDrawer";
 import { CategoryTabs } from "@/components/menu/CategoryTabs";
 import { LanguageSelector } from "@/components/menu/LanguageSelector";
 import { MenuHeader } from "@/components/menu/MenuHeader";
 import { MenuItemCard } from "@/components/menu/MenuItemCard";
-import { getCategoryTranslation, getMenuItemTranslation, isRtlLanguage } from "@/lib/languageUtils";
+import {
+  formatCurrency,
+  getCategoryTranslation,
+  getMenuItemTranslation,
+  isRtlLanguage
+} from "@/lib/languageUtils";
 import { getMenuLabels } from "@/lib/menuLabels";
+import { useCartStore } from "@/store/useCartStore";
 
 interface MenuPageClientProps {
   restaurant: Restaurant;
   categories: MenuCategory[];
   items: MenuItem[];
   initialLanguage?: LanguageCode;
+  orderSource?: {
+    tableCode?: string;
+    qrCode?: string;
+  };
 }
 
 type MenuFilterKey = "popular" | "vegetarian" | "spicy" | "glutenFree" | "dairy";
@@ -101,7 +112,8 @@ export function MenuPageClient({
   restaurant,
   categories,
   items,
-  initialLanguage
+  initialLanguage,
+  orderSource
 }: MenuPageClientProps) {
   const activeCategories = categories.filter((category) => category.isActive);
   const [languageCode, setLanguageCode] = useState<LanguageCode>(
@@ -111,6 +123,9 @@ export function MenuPageClient({
   const [selectedCategoryId, setSelectedCategoryId] = useState(activeCategories[0]?.id ?? "");
   const [searchText, setSearchText] = useState("");
   const [activeFilters, setActiveFilters] = useState<MenuFilterKey[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const cartItems = useCartStore((state) => state.items);
+  const addItem = useCartStore((state) => state.addItem);
   const deferredSearchText = useDeferredValue(searchText);
   const labels = getMenuLabels(languageCode);
   const isRtl = isRtlLanguage(languageCode);
@@ -154,6 +169,9 @@ export function MenuPageClient({
   );
 
   const popularItems = filteredItems.filter((item) => item.isPopular);
+  const cartItemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const cartTotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const cartCurrency = cartItems[0]?.currency ?? restaurant.currency;
 
   function toggleFilter(filter: MenuFilterKey) {
     setActiveFilters((currentFilters) =>
@@ -170,6 +188,18 @@ export function MenuPageClient({
       document
         .getElementById(`menu-category-${categoryId}`)
         ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+
+  function addMenuItemToCart(item: MenuItem) {
+    const translation = getMenuItemTranslation(item, languageCode);
+
+    addItem({
+      menuItemId: item.id,
+      name: translation.translatedName,
+      price: item.price,
+      currency: item.currency,
+      imageUrl: item.imageUrl
     });
   }
 
@@ -259,7 +289,13 @@ export function MenuPageClient({
             </div>
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {popularItems.map((item) => (
-                <MenuItemCard key={`featured-${item.id}`} item={item} languageCode={languageCode} featured />
+                <MenuItemCard
+                  key={`featured-${item.id}`}
+                  item={item}
+                  languageCode={languageCode}
+                  featured
+                  onAddToCart={() => addMenuItemToCart(item)}
+                />
               ))}
             </div>
           </section>
@@ -308,7 +344,12 @@ export function MenuPageClient({
                 {sectionItems.length > 0 ? (
                   <div className="grid gap-3 md:grid-cols-2 xl:gap-4">
                     {sectionItems.map((item) => (
-                      <MenuItemCard key={item.id} item={item} languageCode={languageCode} />
+                      <MenuItemCard
+                        key={item.id}
+                        item={item}
+                        languageCode={languageCode}
+                        onAddToCart={() => addMenuItemToCart(item)}
+                      />
                     ))}
                   </div>
                 ) : (
@@ -341,20 +382,35 @@ export function MenuPageClient({
         </div>
       </section>
 
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#f0c76b]/[0.35] bg-[#07111f]/[0.96] px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 text-[#fff3df] shadow-[0_-18px_55px_rgba(4,10,20,0.32)] backdrop-blur md:hidden">
-        <div className="mx-auto flex max-w-md items-center justify-between gap-3">
-          <p className="text-xs font-semibold leading-5 text-white/[0.76]">
-            Sipariş vermek için garsona ulaşabilirsiniz.
-          </p>
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#f0c76b]/[0.35] bg-[#07111f]/[0.96] px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 text-[#fff3df] shadow-[0_-18px_55px_rgba(4,10,20,0.32)] backdrop-blur md:bottom-5 md:left-1/2 md:right-auto md:w-[min(38rem,calc(100vw-2rem))] md:-translate-x-1/2 md:rounded-[1.2rem] md:border">
+        <div className="mx-auto flex max-w-xl items-center justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-xs font-semibold leading-5 text-white/[0.76]">
+              {cartItemCount > 0 ? `${cartItemCount} urun secildi` : "Siparis icin urun secin"}
+            </p>
+            <p className="truncate text-sm font-black text-[#f0c76b]" dir="ltr">
+              {formatCurrency(cartTotal, cartCurrency)}
+            </p>
+          </div>
           <button
             type="button"
+            onClick={() => setIsCartOpen(true)}
             className="inline-flex h-11 shrink-0 items-center gap-2 rounded-md bg-[#f0c76b] px-3.5 text-sm font-black text-[#07111f] shadow-[0_12px_30px_rgba(217,155,43,0.28)] transition hover:bg-[#f5d892] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
           >
-            <BellRing className="h-4 w-4" />
-            Garsona Çağır
+            <ShoppingBag className="h-4 w-4" />
+            Sepeti Goruntule
           </button>
         </div>
       </div>
+
+      <CartDrawer
+        branchId={restaurant.id}
+        restaurantName={restaurant.name}
+        tableCode={orderSource?.tableCode}
+        qrCode={orderSource?.qrCode}
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+      />
     </main>
   );
 }

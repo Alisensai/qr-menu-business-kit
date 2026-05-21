@@ -20,6 +20,8 @@ export type RestaurantStatus = "active" | "draft" | "paused";
 
 export type DietKey = "vegan" | "vegetarian" | "spicy" | "glutenFree";
 
+export type OrderStatus = "PENDING" | "PREPARING" | "COMPLETED";
+
 export interface Language {
   code: LanguageCode;
   name: string;

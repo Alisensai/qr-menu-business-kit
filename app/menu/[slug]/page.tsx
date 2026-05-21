@@ -198,10 +198,10 @@ export default async function MenuPage({
   searchParams
 }: {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ lang?: string }>;
+  searchParams: Promise<{ lang?: string; table?: string; qr?: string }>;
 }) {
   const { slug } = await params;
-  const { lang } = await searchParams;
+  const { lang, table, qr } = await searchParams;
   const branch = await getBranchMenu(slug);
 
   if (!branch) {
@@ -219,6 +219,10 @@ export default async function MenuPage({
       categories={data.categories}
       items={data.items}
       initialLanguage={initialLanguage}
+      orderSource={{
+        tableCode: table,
+        qrCode: qr
+      }}
     />
   );
 }

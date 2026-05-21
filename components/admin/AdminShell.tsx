@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { BarChart3, Home, MessageSquareReply, Store, Tags } from "lucide-react";
+import { BarChart3, ClipboardList, Home, MessageSquareReply, Store, Tags } from "lucide-react";
 import type { ReactNode } from "react";
 import { MockDataNotice } from "@/components/admin/MockDataNotice";
 
 const adminNav = [
   { href: "/admin", label: "Dashboard", icon: BarChart3 },
   { href: "/admin/restaurants", label: "Restoranlar", icon: Store },
+  { href: "/admin/orders", label: "Siparisler", icon: ClipboardList },
   { href: "/admin/reviews", label: "Yorum Cevapları", icon: MessageSquareReply },
   { href: "/pricing", label: "Paketler", icon: Tags },
   { href: "/", label: "Site", icon: Home }

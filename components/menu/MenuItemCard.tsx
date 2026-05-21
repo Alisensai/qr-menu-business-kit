@@ -1,6 +1,6 @@
 import Image from "next/image";
 import clsx from "clsx";
-import { Flame, Leaf, Sparkles, Sprout, UtensilsCrossed, WheatOff } from "lucide-react";
+import { Flame, Leaf, Plus, Sparkles, Sprout, UtensilsCrossed, WheatOff } from "lucide-react";
 import type { LanguageCode, MenuItem } from "@/types";
 import { formatCurrency, getMenuItemTranslation } from "@/lib/languageUtils";
 import { getAllergenName, getMenuLabels, getMenuTag } from "@/lib/menuLabels";
@@ -9,6 +9,7 @@ interface MenuItemCardProps {
   item: MenuItem;
   languageCode: LanguageCode;
   featured?: boolean;
+  onAddToCart?: () => void;
 }
 
 const dietIcons = [
@@ -28,7 +29,12 @@ function MenuImagePlaceholder() {
   );
 }
 
-export function MenuItemCard({ item, languageCode, featured = false }: MenuItemCardProps) {
+export function MenuItemCard({
+  item,
+  languageCode,
+  featured = false,
+  onAddToCart
+}: MenuItemCardProps) {
   const translation = getMenuItemTranslation(item, languageCode);
   const labels = getMenuLabels(languageCode);
   const description = translation.shortDescription ?? translation.description;
@@ -102,6 +108,17 @@ export function MenuItemCard({ item, languageCode, featured = false }: MenuItemC
         >
           {description}
         </p>
+
+        {onAddToCart ? (
+          <button
+            type="button"
+            onClick={onAddToCart}
+            className="mt-3 inline-flex h-10 w-fit items-center gap-2 rounded-md border border-[#d4a34c] bg-[#07111f] px-3 text-sm font-black text-[#fff3df] shadow-[0_12px_28px_rgba(7,17,31,0.16)] transition hover:border-[#f0c76b] hover:bg-[#13243a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-saffron"
+          >
+            <Plus className="h-4 w-4 text-[#f0c76b]" />
+            Sepete Ekle
+          </button>
+        ) : null}
 
         <div className="mt-3 flex flex-wrap gap-1.5">
           {dietIcons.map(({ key, labelKey, icon: Icon }) =>
