@@ -110,15 +110,11 @@ DATABASE_URL=postgresql://...
 AUTH_SECRET=uzun-rastgele-bir-secret
 ```
 
-## Admin Demo Koruması
+## Admin Kimlik Doğrulama
 
-Admin route'ları müşteri demosunda doğrudan görünmesin diye basit bir demo şifre ekranı ile korunur.
+`/admin` ile başlayan route'lar NextAuth oturumu ister. Oturum yoksa middleware kullanıcıyı `/login` sayfasına yönlendirir; admin layout'u da sunucu tarafında session kontrolünü tekrarlar.
 
-```text
-Demo şifre: demo123
-```
-
-Bu koruma sadece demo amaçlıdır ve gerçek güvenlik sağlamaz. Gerçek müşteri kullanımı için Supabase Auth veya başka bir gerçek authentication sistemi eklenmelidir.
+Bu aşamada giriş altyapısı Prisma kullanıcı kaydı ve hash'lenmiş şifre bekler. Tenant bazlı veri filtreleme sonraki veri erişim katmanı adımlarında session içindeki `tenantId` ile bağlanacaktır.
 
 ## Klasör Yapısı
 
