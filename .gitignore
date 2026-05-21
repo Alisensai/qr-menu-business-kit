@@ -12,3 +12,5 @@ build
 dev-server.log
 test-results
 playwright-report
+
+/lib/generated/prisma
