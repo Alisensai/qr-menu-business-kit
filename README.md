@@ -18,6 +18,7 @@ Bu uygulama işletme sahibine kod göstermez. İşletme sahibi QR menü linkini,
 - QR kod gösterimi, QR PNG indirme ve masa kartı PNG indirme
 - Müşteri sepeti, ürün notu ve QR menüden canlı sipariş oluşturma akışı
 - Admin canlı sipariş ekranı ve sipariş durumu güncelleme
+- Admin ürün düzenleme formundan Vercel Blob görsel yükleme
 - Google yorum cevap şablonları ve kopyalama butonları
 - Hazır satış mesajı ve WhatsApp yönlendirme placeholder'ı
 - Mock data ayrı data dosyalarında
@@ -105,6 +106,14 @@ Landing ve paket içeriklerinde demo veriler bulunur. Dinamik menü, admin giri�
 DATABASE_URL=postgresql://...
 AUTH_SECRET=uzun-rastgele-bir-secret
 ```
+
+Admin ürün görsel yükleme için public Vercel Blob store oluşturup Blob token'ını tanımlayın:
+
+```text
+BLOB_READ_WRITE_TOKEN=vercel_blob_read_write_token
+```
+
+Blob store Vercel projesine bağlıysa token Vercel ortamına eklenir; local geliştirme için ortam değerlerini `vercel env pull` ile çekebilirsiniz. Admin ürün yükleme akışı AVIF, JPG, PNG ve WebP dosyalarını kabul eder ve server upload akışını 4 MB sınırında tutar.
 
 İsteğe bağlı:
 

@@ -1,5 +1,6 @@
 "use server";
 
+import { put } from "@vercel/blob";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
@@ -8,6 +9,13 @@ import { slugify } from "@/lib/slugify";
 
 const SORT_ORDER_STEP = 10;
 const SUPPORTED_CURRENCIES = new Set(["TRY", "EUR", "USD"]);
+const MENU_IMAGE_MAX_BYTES = 4_000_000;
+const MENU_IMAGE_EXTENSIONS = {
+  "image/avif": "avif",
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp"
+} as const;
 
 function getRequiredString(formData: FormData, key: string) {
   const value = String(formData.get(key) ?? "").trim();
@@ -83,6 +91,27 @@ function getItemInput(formData: FormData) {
     isVegetarian: formData.get("isVegetarian") === "on",
     isSpicy: formData.get("isSpicy") === "on",
     isGlutenFree: formData.get("isGlutenFree") === "on"
+  };
+}
+
+function getMenuImage(formData: FormData) {
+  const file = formData.get("imageFile");
+
+  if (!(file instanceof File) || file.size === 0) {
+    throw new Error("A menu item image is required.");
+  }
+
+  if (!(file.type in MENU_IMAGE_EXTENSIONS)) {
+    throw new Error("Menu item images must be AVIF, JPG, PNG, or WebP.");
+  }
+
+  if (file.size > MENU_IMAGE_MAX_BYTES) {
+    throw new Error("Menu item images must be 4 MB or smaller.");
+  }
+
+  return {
+    file,
+    extension: MENU_IMAGE_EXTENSIONS[file.type as keyof typeof MENU_IMAGE_EXTENSIONS]
   };
 }
 
@@ -208,6 +237,11 @@ function revalidateMenuAdmin(branchSlug: string) {
   revalidatePath(`/admin/restaurants/${branchSlug}`);
 }
 
+function revalidateMenuRoutes(branchSlug: string) {
+  revalidateMenuAdmin(branchSlug);
+  revalidatePath(`/menu/${branchSlug}`);
+}
+
 export async function createMenuCategory(formData: FormData) {
   const tenantId = await getAuthenticatedTenantId();
   const branchId = getRequiredString(formData, "branchId");
@@ -256,7 +290,7 @@ export async function updateMenuCategory(formData: FormData) {
     }
   });
 
-  revalidateMenuAdmin(category.branch.slug);
+  revalidateMenuRoutes(category.branch.slug);
 }
 
 export async function deleteMenuCategory(formData: FormData) {
@@ -319,7 +353,38 @@ export async function updateMenuItem(formData: FormData) {
     }
   });
 
-  revalidateMenuAdmin(nextCategory.branch.slug);
+  revalidateMenuRoutes(nextCategory.branch.slug);
+}
+
+export async function uploadMenuItemImage(formData: FormData) {
+  const tenantId = await getAuthenticatedTenantId();
+  const itemId = getRequiredString(formData, "itemId");
+  const item = await getAuthorizedItem(itemId, tenantId);
+  const { file, extension } = getMenuImage(formData);
+
+  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+    throw new Error("BLOB_READ_WRITE_TOKEN is required to upload menu item images.");
+  }
+
+  const blob = await put(
+    `menu-items/${item.category.branch.slug}/${item.id}.${extension}`,
+    file,
+    {
+      access: "public",
+      addRandomSuffix: true
+    }
+  );
+
+  await prisma.menuItem.update({
+    where: {
+      id: item.id
+    },
+    data: {
+      imageUrl: blob.url
+    }
+  });
+
+  revalidateMenuRoutes(item.category.branch.slug);
 }
 
 export async function deleteMenuItem(formData: FormData) {
@@ -333,5 +398,5 @@ export async function deleteMenuItem(formData: FormData) {
     }
   });
 
-  revalidateMenuAdmin(item.category.branch.slug);
+  revalidateMenuRoutes(item.category.branch.slug);
 }
