@@ -38,6 +38,55 @@ export default async function AdminRestaurantDetailPage({
   });
 
   if (branch) {
+    const categories = await prisma.menuCategory.findMany({
+      where: {
+        branchId: branch.id
+      },
+      orderBy: {
+        sortOrder: "asc"
+      },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        isActive: true,
+        sortOrder: true
+      }
+    });
+    const items = await prisma.menuItem.findMany({
+      where: {
+        category: {
+          branchId: branch.id
+        }
+      },
+      orderBy: [
+        {
+          sortOrder: "asc"
+        },
+        {
+          createdAt: "asc"
+        }
+      ],
+      select: {
+        id: true,
+        categoryId: true,
+        name: true,
+        description: true,
+        price: true,
+        currency: true,
+        imageUrl: true,
+        tag: true,
+        isPopular: true,
+        isActive: true,
+        allergens: true,
+        isVegan: true,
+        isVegetarian: true,
+        isSpicy: true,
+        isGlutenFree: true,
+        sortOrder: true
+      }
+    });
+
     return (
       <div className="space-y-6">
         <div>
@@ -62,10 +111,15 @@ export default async function AdminRestaurantDetailPage({
             isActive: branch.isActive
           }}
         />
-
-        <section className="rounded-lg border border-ink/10 bg-white p-5 text-sm leading-6 text-graphite/72 shadow-soft">
-          Kategori ve urun CRUD baglantisi sonraki admin veri aksiyonlariyla bu subeye eklenecek.
-        </section>
+        <CategoryManager branchId={branch.id} categories={categories} />
+        <MenuEditor
+          branchCurrency={branch.currency}
+          categories={categories}
+          items={items.map((item) => ({
+            ...item,
+            price: item.price.toString()
+          }))}
+        />
       </div>
     );
   }
