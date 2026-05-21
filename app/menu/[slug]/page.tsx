@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { MenuPageClient } from "@/components/menu/MenuPageClient";
+import { SubscriptionExpiredNotice } from "@/components/menu/SubscriptionExpiredNotice";
+import { isTenantMenuExpired } from "@/lib/billing";
 import { getPackageLanguages } from "@/lib/languageUtils";
 import prisma from "@/lib/prisma";
 import type {
@@ -60,7 +62,9 @@ async function getBranchMenu(slug: string) {
     include: {
       tenant: {
         select: {
-          packageType: true
+          packageType: true,
+          subscriptionEndsAt: true,
+          subscriptionStatus: true
         }
       },
       categories: {
@@ -206,6 +210,10 @@ export default async function MenuPage({
 
   if (!branch) {
     notFound();
+  }
+
+  if (isTenantMenuExpired(branch.tenant.subscriptionStatus, branch.tenant.subscriptionEndsAt)) {
+    return <SubscriptionExpiredNotice restaurantName={branch.name} />;
   }
 
   const data = toMenuPageData(branch);

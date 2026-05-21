@@ -1,6 +1,6 @@
 import { DefaultSession } from "next-auth";
 
-export type AppUserRole = "OWNER" | "ADMIN" | "EDITOR";
+export type AppUserRole = "SUPER_ADMIN" | "OWNER" | "ADMIN" | "EDITOR";
 
 declare module "next-auth" {
   interface User {

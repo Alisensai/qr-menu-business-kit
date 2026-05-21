@@ -13,6 +13,7 @@ datasource db {
 }
 
 enum UserRole {
+  SUPER_ADMIN
   OWNER
   ADMIN
   EDITOR
@@ -98,14 +99,16 @@ model VerificationToken {
 }
 
 model Tenant {
-  id                 String             @id @default(uuid()) @db.Uuid
-  name               String
-  slug               String             @unique
-  packageType        PackageType        @default(STARTER)
-  subscriptionStatus SubscriptionStatus @default(TRIALING)
-  subscriptionEndsAt DateTime?
-  createdAt          DateTime           @default(now())
-  updatedAt          DateTime           @updatedAt
+  id                   String             @id @default(uuid()) @db.Uuid
+  name                 String
+  slug                 String             @unique
+  packageType          PackageType        @default(STARTER)
+  subscriptionStatus   SubscriptionStatus @default(TRIALING)
+  subscriptionEndsAt   DateTime?
+  stripeCustomerId     String?            @unique
+  stripeSubscriptionId String?            @unique
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
 
   users    User[]
   branches Branch[]

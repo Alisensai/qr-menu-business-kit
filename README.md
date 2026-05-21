@@ -23,6 +23,7 @@ Bu uygulama işletme sahibine kod göstermez. İşletme sahibi QR menü linkini,
 - Hazır satış mesajı ve WhatsApp yönlendirme placeholder'ı
 - Mock data ayrı data dosyalarında
 - Supabase/Firebase/PostgreSQL entegrasyonuna uygun veri katmanı
+- Stripe Checkout ile SaaS abonelik paket secimi ve webhook ile Tenant abonelik guncelleme
 
 ## Kurulum
 
@@ -113,6 +114,19 @@ Admin ürün görsel yükleme için public Vercel Blob store oluşturup Blob tok
 BLOB_READ_WRITE_TOKEN=vercel_blob_read_write_token
 ```
 
+Stripe abonelik Checkout ve webhook akisi icin:
+
+```text
+STRIPE_SECRET_KEY=sk_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+STRIPE_PRICE_STARTER=price_...
+STRIPE_PRICE_TOURIST=price_...
+STRIPE_PRICE_GLOBAL=price_...
+STRIPE_PRICE_MAINTENANCE=price_...
+```
+
+Stripe fiyat ID'leri aylik recurring Price kayitlarina baglanmalidir. Webhook endpoint'i `/api/stripe/webhook` olarak tanimlanir; `checkout.session.completed`, `customer.subscription.created`, `customer.subscription.updated` ve `customer.subscription.deleted` event'leri Tenant abonelik durumunu gunceller.
+
 Blob store Vercel projesine bağlıysa token Vercel ortamına eklenir; local geliştirme için ortam değerlerini `vercel env pull` ile çekebilirsiniz. Admin ürün yükleme akışı AVIF, JPG, PNG ve WebP dosyalarını kabul eder ve server upload akışını 4 MB sınırında tutar.
 
 İsteğe bağlı:
@@ -137,6 +151,7 @@ Bu aşamada giriş altyapısı Prisma kullanıcı kaydı ve hash'lenmiş şifre 
 app/
   page.tsx
   pricing/page.tsx
+  api/stripe/webhook/route.ts
   menu/[slug]/page.tsx
   admin/page.tsx
   admin/orders/page.tsx
@@ -167,6 +182,7 @@ types/
 
 - Landing page: `/`
 - Paketler: `/pricing`
+- Stripe webhook: `/api/stripe/webhook`
 - Admin panel: `/admin`
 - Canlı siparişler: `/admin/orders`
 - Restoran listesi: `/admin/restaurants`
@@ -226,6 +242,6 @@ Bu yapı ileride veritabanına taşınırken servis/repository katmanı eklenere
 - QR kod PNG indirme
 - PDF teklif oluşturma
 - Masa kartı PDF çıktısı
-- Stripe/Lemon Squeezy ödeme
+- Stripe Customer Portal ile self-service paket degisikligi ve iptal akisi
 - WhatsApp entegrasyonu
 - Çoklu müşteri yönetimi
