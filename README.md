@@ -103,6 +103,13 @@ Bu değer girilirse Next.js metadata URL'si gerçek production domainine göre o
 
 QR kodların telefon kamerasıyla doğru şekilde açılması için `NEXT_PUBLIC_SITE_URL` production domainiyle ayarlanmalıdır. QR içerikleri relative path değil, tam URL olarak üretilir.
 
+Auth.js Credentials girişi etkinleştirildiğinde production ortamında Prisma bağlantısı ve Auth.js secret değeri de tanımlanmalıdır:
+
+```text
+DATABASE_URL=postgresql://...
+AUTH_SECRET=uzun-rastgele-bir-secret
+```
+
 ## Admin Demo Koruması
 
 Admin route'ları müşteri demosunda doğrudan görünmesin diye basit bir demo şifre ekranı ile korunur.
